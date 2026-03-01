@@ -13,8 +13,7 @@ export const Pagination: React.FC<Props> = ({ total, perPage }) => {
   const pages = getPages(total, perPage);
   const lastPage = pages[pages.length - 1];
 
-  const makeLink = (page: number) =>
-    `?page=${page}&perPage=${perPage}`;
+  const makeLink = (page: number) => `?page=${page}&perPage=${perPage}`;
 
   return (
     <ul className="pagination">
@@ -34,17 +33,17 @@ export const Pagination: React.FC<Props> = ({ total, perPage }) => {
           key={number}
           className={currentPage === number ? 'page-item active' : 'page-item'}
         >
-          <Link
-            data-cy="pageLink"
-            className="page-link"
-            to={makeLink(number)}
-          >
+          <Link data-cy="pageLink" className="page-link" to={makeLink(number)}>
             {number}
           </Link>
         </li>
       ))}
 
-      <li className={currentPage === lastPage ? 'page-item disabled' : 'page-item'}>
+      <li
+        className={
+          currentPage === lastPage ? 'page-item disabled' : 'page-item'
+        }
+      >
         <Link
           data-cy="nextLink"
           className="page-link"

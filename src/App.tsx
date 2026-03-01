@@ -21,8 +21,7 @@ export const App: React.FC = () => {
   };
 
   const visibleItems = items.filter(
-    (_, index) =>
-      index < perPage * page && index >= perPage * (page - 1),
+    (_, index) => index < perPage * page && index >= perPage * (page - 1),
   );
 
   const firstItem = visibleItems[0];
@@ -45,6 +44,7 @@ export const App: React.FC = () => {
             value={perPage}
             onChange={event => {
               const newPerPage = Number(event.target.value);
+
               updateParams(1, newPerPage);
             }}
           >
