@@ -1,18 +1,30 @@
-import React, { useState } from 'react';
 import './App.css';
+import React from 'react';
+import { useSearchParams } from 'react-router-dom';
+
 import { getNumbers } from './utils';
 import { Pagination } from './components/Pagination';
 
 const items = getNumbers(1, 42);
 
 export const App: React.FC = () => {
-  const [PerPage, setPerPage] = useState(5);
-  const [pageChange, setPageChange] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = Number(searchParams.get('page')) || 1;
+  const perPage = Number(searchParams.get('perPage')) || 5;
+
+  const updateParams = (newPage: number, newPerPage: number = perPage) => {
+    setSearchParams({
+      page: newPage.toString(),
+      perPage: newPerPage.toString(),
+    });
+  };
 
   const visibleItems = items.filter(
-    (item, index) =>
-      index < PerPage * pageChange && index >= PerPage * (pageChange - 1),
+    (_, index) =>
+      index < perPage * page && index >= perPage * (page - 1),
   );
+
   const firstItem = visibleItems[0];
   const lastItem = visibleItems[visibleItems.length - 1];
 
@@ -21,7 +33,7 @@ export const App: React.FC = () => {
       <h1>Items with Pagination</h1>
 
       <p className="lead" data-cy="info">
-        Page {pageChange} (items {firstItem} - {lastItem} of 42)
+        Page {page} (items {firstItem} - {lastItem} of 42)
       </p>
 
       <div className="form-group row">
@@ -30,10 +42,10 @@ export const App: React.FC = () => {
             data-cy="perPageSelector"
             id="perPageSelector"
             className="form-control"
-            value={PerPage}
+            value={perPage}
             onChange={event => {
-              setPerPage(Number(event.target.value));
-              setPageChange(1);
+              const newPerPage = Number(event.target.value);
+              updateParams(1, newPerPage);
             }}
           >
             <option value="3">3</option>
@@ -48,14 +60,8 @@ export const App: React.FC = () => {
         </label>
       </div>
 
-      <Pagination
-        total={42}
-        getPerPage={PerPage}
-        currentPage={pageChange}
-        onPageChange={page => {
-          setPageChange(page);
-        }}
-      />
+      <Pagination total={42} perPage={perPage} />
+
       <ul>
         {visibleItems.map(item => (
           <li key={item} data-cy="item">

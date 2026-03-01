@@ -1,62 +1,58 @@
+import { Link, useSearchParams } from 'react-router-dom';
 import { getPages } from '../../utils';
 
 type Props = {
   total: number;
-  getPerPage: number;
-  currentPage: number;
-  onPageChange: (page: number) => void;
+  perPage: number;
 };
-export const Pagination: React.FC<Props> = ({
-  total,
-  getPerPage,
-  currentPage,
-  onPageChange,
-}) => {
-  const pages = getPages(total, getPerPage);
+
+export const Pagination: React.FC<Props> = ({ total, perPage }) => {
+  const [searchParams] = useSearchParams();
+
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const pages = getPages(total, perPage);
   const lastPage = pages[pages.length - 1];
+
+  const makeLink = (page: number) =>
+    `?page=${page}&perPage=${perPage}`;
 
   return (
     <ul className="pagination">
       <li className={currentPage === 1 ? 'page-item disabled' : 'page-item'}>
-        <a
-          onClick={() => onPageChange(currentPage - 1)}
+        <Link
           data-cy="prevLink"
           className="page-link"
-          href="#prev"
-          aria-disabled={currentPage === 1 ? 'true' : 'false'}
+          to={makeLink(currentPage - 1)}
+          aria-disabled={currentPage === 1}
         >
           «
-        </a>
+        </Link>
       </li>
+
       {pages.map(number => (
         <li
           key={number}
           className={currentPage === number ? 'page-item active' : 'page-item'}
         >
-          <a
+          <Link
             data-cy="pageLink"
             className="page-link"
-            href="#1"
-            onClick={() => onPageChange(number)}
+            to={makeLink(number)}
           >
             {number}
-          </a>
+          </Link>
         </li>
       ))}
-      <li
-        className={
-          currentPage === lastPage ? 'page-item disabled' : 'page-item'
-        }
-      >
-        <a
-          onClick={() => onPageChange(currentPage + 1)}
+
+      <li className={currentPage === lastPage ? 'page-item disabled' : 'page-item'}>
+        <Link
           data-cy="nextLink"
           className="page-link"
-          href="#next"
-          aria-disabled={currentPage === lastPage ? 'true' : 'false'}
+          to={makeLink(currentPage + 1)}
+          aria-disabled={currentPage === lastPage}
         >
           »
-        </a>
+        </Link>
       </li>
     </ul>
   );
